@@ -4,14 +4,15 @@ import requests
 
 from flask import Flask, request, render_template
 
-environment = os.environ['ENVIRONMENT']
+environment = os.environ['ENVIRONMENT'];
+environment = environment if environment is not None else 'dev'
 
 app = Flask(__name__)
 
 def getLocation(ip):
     response = requests.get(f'https://ipapi.co/{ip}/json/').json()
     if response.get('error') == True:
-        return "Error: %s" % response.get('reason')
+        return "Error from ipapi: %s" % response.get('reason')
     else:
         return "Location %s %s %s, Latitude: %s Longitude: %s" % response.get('city'), response.get('region'), response.get('country'), response.get('latitude'), response.get('longitude')
 
