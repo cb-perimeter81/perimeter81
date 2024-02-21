@@ -23,3 +23,7 @@ def index():
     ip = forwardedFor if forwardedFor is not None else request.remote_addr
     location = getLocation(ip)
     return render_template('index.html', environment=environment, ip=ip, location=location)
+
+@app.route("/health")
+def health():
+    return ('', 204)

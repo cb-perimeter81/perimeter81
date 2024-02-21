@@ -26,9 +26,29 @@ curl localhost:8888 -H "x-forwarded-for: $(curl -4 ifconfig.me)"
 
 ## Docker image
 
-### Building and running
+### Building and running locally
 
 ```
-docker build . -t perimeter81-app:latest
-docker run -e "ENVIRONMENT=dev" -p 8888:8888 perimeter81-app
+docker build . -t cbrothers-app:latest
+docker run -e "ENVIRONMENT=dev" -p 8888:8888 cbrothers-app
+```
+
+### Building and pushing to ECR
+First ensure the repository is created and log in to it
+```
+aws ecr create-repository \
+    --repository-name cbrothers-app \
+    --image-scanning-configuration scanOnPush=true
+aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+```
+
+Then build and push the image to ECR
+```
+docker build . -t 329082085800.dkr.ecr.us-east-2.amazonaws.com/cbrothers-app:latest
+docker push 329082085800.dkr.ecr.us-east-2.amazonaws.com/cbrothers-app:latest
+```
+
+Alternatively use `docker buildx` for multi or different platform builds
+```
+ docker buildx build --platform linux/amd64 -t 329082085800.dkr.ecr.us-east-2.amazonaws.com/cbrothers-app:0.1.0 --push .
 ```
